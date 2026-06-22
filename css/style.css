@@ -1,0 +1,36 @@
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f4f8fb;
+}
+
+.hero{
+    background: linear-gradient(135deg,#0d6efd,#198754);
+    color:white;
+    padding:80px 20px;
+}
+
+.card{
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+footer{
+    background:#212529;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+aside{
+    background:#e9ecef;
+    border-radius:10px;
+}
+
+@media(max-width:768px){
+    .hero h1{
+        font-size:28px;
+    }
+}
