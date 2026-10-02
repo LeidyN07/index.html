@@ -1,1 +1,140 @@
+{% extends 'base.html' %}
 
+{% block title %}Registrar servicio | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloFormulario">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="mb-4">
+                <h1 id="tituloFormulario">Registrar un servicio</h1>
+
+                <p class="text-muted">
+                    Describe el apoyo que ofrecerá TecnoAyuda
+                    e indica su precio en dólares.
+                </p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Información del servicio</h2>
+                </div>
+
+                <div class="card-body p-4">
+                    <form
+                        action="{{ url_for('nuevo_producto') }}"
+                        method="POST"
+                        novalidate>
+
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-4">
+                            {{ form.nombre.label(class_="form-label") }}
+
+                            {{ form.nombre(
+                                class_="form-control is-invalid"
+                                    if form.nombre.errors
+                                    else "form-control",
+                                placeholder="Ejemplo: Orientación para presentaciones",
+                                aria_describedby="ayudaNombre"
+                            ) }}
+
+                            <div id="ayudaNombre" class="form-text">
+                                Escribe un nombre claro para el servicio.
+                            </div>
+
+                            {% for error in form.nombre.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.descripcion.label(class_="form-label") }}
+
+                            {{ form.descripcion(
+                                class_="form-control is-invalid"
+                                    if form.descripcion.errors
+                                    else "form-control",
+                                placeholder="Explica en qué consiste el apoyo.",
+                                aria_describedby="ayudaDescripcion"
+                            ) }}
+
+                            <div id="ayudaDescripcion" class="form-text">
+                                Ejemplo: Acompañamiento para organizar ideas
+                                y preparar diapositivas claras.
+                            </div>
+
+                            {% for error in form.descripcion.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.precio.label(class_="form-label") }}
+
+                            <div class="input-group has-validation">
+                                <span class="input-group-text">USD</span>
+
+                                {{ form.precio(
+                                    class_="form-control is-invalid"
+                                        if form.precio.errors
+                                        else "form-control",
+                                    type="number",
+                                    min="0",
+                                    step="0.01",
+                                    placeholder="0.00",
+                                    aria_describedby="ayudaPrecio"
+                                ) }}
+
+                                {% for error in form.precio.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div id="ayudaPrecio" class="form-text">
+                                Ingresa el valor del servicio con hasta
+                                dos decimales.
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            {{ form.submit(
+                                class_="btn btn-primary",
+                                value="Guardar servicio"
+                            ) }}
+
+                            <a
+                                href="{{ url_for('productos') }}"
+                                class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <p class="text-muted small mt-3">
+                Al guardar, el servicio aparecerá en el catálogo.
+            </p>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
