@@ -1,1 +1,129 @@
+{% extends 'base.html' %}
 
+{% block title %}
+    {{ 'Editar cliente' if editando | default(false) else 'Registrar cliente' }}
+    | TecnoAyuda
+{% endblock %}
+
+{% block content %}
+<section aria-labelledby="tituloCliente">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="mb-4">
+                <h1 id="tituloCliente">
+                    {{ 'Editar cliente' if editando | default(false) else 'Registrar cliente' }}
+                </h1>
+
+                <p class="text-muted">
+                    {{ 'Actualiza los datos de contacto del cliente.'
+                       if editando | default(false)
+                       else 'Guarda los datos de contacto del cliente desde la administración de TecnoAyuda.' }}
+                </p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Datos del cliente</h2>
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if tiene_cuenta | default(false) %}
+                        <div class="alert alert-info">
+                            Este cliente tiene una cuenta.
+                            Si cambias su correo, también cambiará
+                            el correo que utiliza para iniciar sesión.
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-3">
+                            {{ form.nombre.label(class_="form-label") }}
+
+                            {{ form.nombre(
+                                class_="form-control is-invalid"
+                                    if form.nombre.errors
+                                    else "form-control",
+                                placeholder="Nombre completo",
+                                autocomplete="name",
+                                maxlength="100"
+                            ) }}
+
+                            {% for error in form.nombre.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.correo.label(class_="form-label") }}
+
+                            {{ form.correo(
+                                class_="form-control is-invalid"
+                                    if form.correo.errors
+                                    else "form-control",
+                                type="email",
+                                placeholder="nombre@ejemplo.com",
+                                autocomplete="email",
+                                maxlength="150"
+                            ) }}
+
+                            {% for error in form.correo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.telefono.label(class_="form-label") }}
+
+                            {{ form.telefono(
+                                class_="form-control is-invalid"
+                                    if form.telefono.errors
+                                    else "form-control",
+                                type="tel",
+                                placeholder="Teléfono de contacto",
+                                autocomplete="tel",
+                                maxlength="20"
+                            ) }}
+
+                            {% for error in form.telefono.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                {{ 'Guardar cambios'
+                                   if editando | default(false)
+                                   else 'Guardar cliente' }}
+                            </button>
+
+                            <a href="{{ url_for('clientes') }}"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

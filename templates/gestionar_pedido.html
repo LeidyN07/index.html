@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">
+                Pedido PED-{{ '%06d' | format(pedido['id']) }}
+            </h1>
+            <p class="text-muted mb-0">
+                Revisa la solicitud y comunica el avance al cliente.
+            </p>
+        </div>
+
+        <a href="{{ url_for('pedidos_admin') }}"
+           class="btn btn-outline-secondary">
+            Volver a pedidos
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Información del cliente</h2>
+
+                    <dl class="mb-0">
+                        <dt>Nombre</dt>
+                        <dd>{{ pedido['cliente'] }}</dd>
+
+                        <dt>Correo electrónico</dt>
+                        <dd>{{ pedido['correo'] }}</dd>
+
+                        <dt>Teléfono</dt>
+                        <dd class="mb-0">{{ pedido['telefono'] }}</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Servicio solicitado</h2>
+
+                    <dl>
+                        <dt>Servicio</dt>
+                        <dd>{{ pedido['servicio'] }}</dd>
+
+                        <dt>Descripción del pedido</dt>
+                        <dd style="white-space: pre-wrap;">{{ pedido['descripcion'] }}</dd>
+
+                        <dt>Cantidad</dt>
+                        <dd>{{ pedido['cantidad'] }}</dd>
+
+                        <dt>Total</dt>
+                        <dd class="fs-4 fw-bold text-primary">
+                            ${{ '%.2f' | format(pedido['total']) }}
+                        </dd>
+
+                        <dt>Estado del pago</dt>
+                        <dd>
+                            {% if pedido['estado_pago'] == 'Pagado' %}
+                                <span class="badge bg-success">Pagado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    Pendiente
+                                </span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+
+                    {% if pedido['estado_pago'] == 'Pendiente' %}
+                        <a href="{{ url_for('confirmar_pago', registro_id=pedido['factura_id']) }}"
+                           class="btn btn-outline-primary">
+                            Registrar pago recibido
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('comprobante', registro_id=pedido['factura_id']) }}"
+                           class="btn btn-outline-success">
+                            Ver comprobante
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="h5 mb-3">Actualizar el pedido</h2>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-3">
+                            {{ form.estado_trabajo.label(class="form-label") }}
+
+                            {{ form.estado_trabajo(
+                                class="form-select" ~
+                                (" is-invalid" if form.estado_trabajo.errors else "")
+                            ) }}
+
+                            {% for error in form.estado_trabajo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.observaciones.label(class="form-label") }}
+
+                            {{ form.observaciones(
+                                class="form-control" ~
+                                (" is-invalid" if form.observaciones.errors else ""),
+                                rows="5",
+                                maxlength="1000",
+                                placeholder="Escribe un mensaje sobre el avance o la entrega."
+                            ) }}
+
+                            {% for error in form.observaciones.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                            <div class="form-text">
+                                El cliente verá este mensaje en sus pedidos.
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.archivo.label(class="form-label") }}
+
+                            {{ form.archivo(
+                                class="form-control" ~
+                                (" is-invalid" if form.archivo.errors else ""),
+                                accept=".pdf,.docx,.xlsx,.pptx,.txt,.png,.jpg,.jpeg"
+                            ) }}
+
+                            {% for error in form.archivo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                            <div class="form-text">
+                                Puedes adjuntar un documento, una presentación,
+                                una hoja de cálculo o una imagen.
+                                Deja este campo vacío para conservar el archivo existente.
+                            </div>
+                        </div>
+
+                        {% if pedido['archivo_original'] %}
+                            <div class="alert alert-info">
+                                <strong>Archivo adjunto:</strong>
+                                {{ pedido['archivo_original'] }}
+                            </div>
+                        {% endif %}
+
+                        <div class="alert alert-light border">
+                            Actualizar el estado del trabajo no confirma el pago.
+                            Registra el pago cuando realmente lo hayas recibido.
+                        </div>
+
+                        {{ form.submit(class="btn btn-primary") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

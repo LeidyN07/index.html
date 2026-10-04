@@ -1,1 +1,196 @@
+{% extends 'base.html' %}
 
+{% block title %}Registrar servicio y pago | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloFacturacion">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="mb-4">
+                <h1 id="tituloFacturacion">Registrar servicio y pago</h1>
+
+                <p class="text-muted">
+                    Selecciona el cliente y el servicio.
+                    El total se calculará con el precio y la cantidad.
+                </p>
+            </div>
+
+            {% if disponible %}
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h5 mb-0">Datos del registro</h2>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <form method="POST" novalidate>
+
+                            {{ form.hidden_tag() }}
+
+                            {% for error in form.csrf_token.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                    Recarga la página e inténtalo nuevamente.
+                                </div>
+                            {% endfor %}
+
+                            <div class="mb-3">
+                                {{ form.cliente_id.label(class_="form-label") }}
+
+                                {{ form.cliente_id(
+                                    class_="form-select is-invalid"
+                                        if form.cliente_id.errors
+                                        else "form-select"
+                                ) }}
+
+                                {% for error in form.cliente_id.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.producto_id.label(class_="form-label") }}
+
+                                {{ form.producto_id(
+                                    class_="form-select is-invalid"
+                                        if form.producto_id.errors
+                                        else "form-select"
+                                ) }}
+
+                                {% for error in form.producto_id.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.cantidad.label(class_="form-label") }}
+
+                                {{ form.cantidad(
+                                    class_="form-control is-invalid"
+                                        if form.cantidad.errors
+                                        else "form-control",
+                                    min="1",
+                                    max="1000",
+                                    step="1"
+                                ) }}
+
+                                {% for error in form.cantidad.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                                <div class="form-text">
+                                    Total = precio del servicio × cantidad.
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h3 class="h5 mb-3">Información del pago</h3>
+
+                            <div class="mb-3">
+                                {{ form.metodo_pago.label(class_="form-label") }}
+
+                                {{ form.metodo_pago(
+                                    class_="form-select is-invalid"
+                                        if form.metodo_pago.errors
+                                        else "form-select"
+                                ) }}
+
+                                {% for error in form.metodo_pago.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.referencia.label(class_="form-label") }}
+
+                                {{ form.referencia(
+                                    class_="form-control is-invalid"
+                                        if form.referencia.errors
+                                        else "form-control",
+                                    maxlength="100",
+                                    placeholder="Número de operación, si corresponde"
+                                ) }}
+
+                                {% for error in form.referencia.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+
+                                <div class="form-text">
+                                    En efectivo puedes dejar este campo vacío.
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                {{ form.pagado(class_="form-check-input") }}
+
+                                {{ form.pagado.label(
+                                    class_="form-check-label"
+                                ) }}
+                            </div>
+
+                            <div class="alert alert-info">
+                                Marca la casilla únicamente cuando hayas
+                                comprobado que recibiste el pago completo.
+                                Si no la marcas, el registro quedará pendiente.
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                {{ form.submit(class_="btn btn-primary") }}
+
+                                <a
+                                    href="{{ url_for('facturacion') }}"
+                                    class="btn btn-outline-secondary">
+                                    Cancelar
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning">
+                    Primero registra al menos un cliente y un servicio.
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a
+                        href="{{ url_for('nuevo_cliente') }}"
+                        class="btn btn-primary">
+                        Registrar cliente
+                    </a>
+
+                    <a
+                        href="{{ url_for('nuevo_producto') }}"
+                        class="btn btn-outline-primary">
+                        Registrar servicio
+                    </a>
+                </div>
+
+            {% endif %}
+
+            <a
+                href="{{ url_for('facturacion') }}"
+                class="btn btn-outline-secondary mt-4">
+                Volver a facturación
+            </a>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

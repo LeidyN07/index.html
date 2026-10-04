@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitar servicio | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloPedido">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <h1 id="tituloPedido" class="mb-4">
+                Solicitar servicio
+            </h1>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">{{ servicio[1] }}</h2>
+                </div>
+
+                <div class="card-body">
+                    <p>{{ servicio[2] }}</p>
+
+                    <p class="mb-0">
+                        <strong>Precio por unidad:</strong>
+                        ${{ '%.2f' | format(servicio[3]) }} USD
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-4">
+                            {{ form.descripcion.label(
+                                class_="form-label"
+                            ) }}
+
+                            {{ form.descripcion(
+                                class_="form-control is-invalid"
+                                    if form.descripcion.errors
+                                    else "form-control",
+                                rows="5",
+                                maxlength="2000",
+                                placeholder="Explica el tema, las instrucciones y el resultado que necesitas."
+                            ) }}
+
+                            {% for error in form.descripcion.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.cantidad.label(
+                                class_="form-label"
+                            ) }}
+
+                            {{ form.cantidad(
+                                class_="form-control is-invalid"
+                                    if form.cantidad.errors
+                                    else "form-control",
+                                min="1",
+                                max="100",
+                                step="1"
+                            ) }}
+
+                            {% for error in form.cantidad.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                            <div class="form-text">
+                                El total se calculará multiplicando
+                                el precio del servicio por la cantidad.
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            Al confirmar, tu pedido quedará registrado
+                            con el pago pendiente. Confirmar el pedido
+                            no realiza ningún cobro.
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            {{ form.submit(
+                                class_="btn btn-primary"
+                            ) }}
+
+                            <a
+                                href="{{ url_for('productos') }}"
+                                class="btn btn-outline-secondary">
+                                Volver al catálogo
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

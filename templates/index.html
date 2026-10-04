@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TecnoAyuda</title>
+    <title>TecnoAyuda | Apoyo académico y digital</title>
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -14,7 +13,6 @@
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='css/style.css') }}">
-
 </head>
 
 <body>
@@ -22,81 +20,281 @@
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">TecnoAyuda</a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+            <a class="navbar-brand fw-bold"
+               href="{{ url_for('inicio') }}">
+                TecnoAyuda
+            </a>
+
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#menu"
+                aria-controls="menu"
+                aria-expanded="false"
+                aria-label="Abrir menú">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="menu">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#quienes-somos">Quiénes Somos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">
+                            Inicio
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#quienes-somos">
+                            Quiénes somos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#servicios">
+                            Servicios
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ url_for('productos') }}">
+                            Catálogo
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contacto">
+                            Contacto
+                        </a>
+                    </li>
+
+                    {% if session.get('administrador') %}
+
+                        <li class="nav-item dropdown">
+                            <button
+                                class="nav-link dropdown-toggle"
+                                type="button"
+                                id="menuAdministracion"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Administración
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end"
+                                aria-labelledby="menuAdministracion">
+
+                                <li>
+                                    <h6 class="dropdown-header">
+                                        Gestión de TecnoAyuda
+                                    </h6>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('pedidos_admin') }}">
+                                        Pedidos recibidos
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('facturacion') }}">
+                                        Facturación
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('nuevo_producto') }}">
+                                        Agregar servicio
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('clientes') }}">
+                                        Clientes
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('proveedores') }}">
+                                        Colaboradores
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('solicitudes') }}">
+                                        Solicitudes recibidas
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item"
+                                       href="{{ url_for('logout') }}">
+                                        Cerrar sesión
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                    {% elif session.get('cuenta_cliente_id') %}
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ url_for('mis_pedidos') }}">
+                                Mis pedidos
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ url_for('mi_cuenta') }}">
+                                Mi cuenta
+                            </a>
+                        </li>
+
+                    {% else %}
+
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ url_for('login_cliente') }}">
+                                Iniciar sesión
+                            </a>
+                        </li>
+
+                        <li class="nav-item ms-lg-2 my-2 my-lg-0">
+                            <a class="btn btn-light btn-sm"
+                               href="{{ url_for('registro_cliente') }}">
+                                Crear cuenta
+                            </a>
+                        </li>
+
+                        <li class="nav-item ms-lg-2">
+                            <a class="nav-link"
+                               href="{{ url_for('login') }}">
+                                Administración
+                            </a>
+                        </li>
+
+                    {% endif %}
+
                 </ul>
             </div>
         </div>
     </nav>
 </header>
 
+<div class="container mt-3">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensaje in mensajes %}
+            <div
+                class="alert alert-{{ categoria }} alert-dismissible fade show"
+                role="alert">
+
+                {{ mensaje }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Cerrar mensaje">
+                </button>
+            </div>
+        {% endfor %}
+    {% endwith %}
+</div>
+
 <section id="inicio" class="hero text-center">
     <div class="container">
         <h1>Soluciones tecnológicas para tu día a día</h1>
 
         <p class="lead">
-            Ayudamos a estudiantes, emprendedores y profesionales con herramientas digitales prácticas y accesibles.
+            Ayudamos a estudiantes, emprendedores y profesionales
+            con herramientas digitales prácticas y accesibles.
         </p>
 
-        <a href="#contacto" class="btn btn-light btn-lg">
-            Contáctanos
-        </a>
+        <div class="d-flex justify-content-center flex-wrap gap-2">
+            <a href="#registro" class="btn btn-light btn-lg">
+                Solicitar apoyo
+            </a>
+
+            <a href="{{ url_for('productos') }}"
+               class="btn btn-outline-light btn-lg">
+                Ver catálogo
+            </a>
+        </div>
     </div>
 </section>
 
 <main class="container my-5">
 
     <section id="quienes-somos" class="mb-5">
-
-        <h2 class="text-center mb-4">Quiénes Somos</h2>
+        <h2 class="text-center mb-4">Quiénes somos</h2>
 
         <div class="row align-items-center">
-
-            <div class="col-md-6">
-                <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png"
-                     alt="TecnoAyuda"
-                     class="img-fluid">
+            <div class="col-md-6 text-center mb-4">
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/561/561127.png"
+                    alt="Comunicación y apoyo digital"
+                    class="img-fluid"
+                    style="max-width: 280px;"
+                    loading="lazy">
             </div>
 
             <div class="col-md-6">
                 <p>
-                    TecnoAyuda es un emprendimiento enfocado en ofrecer servicios tecnológicos accesibles para estudiantes, profesionales y pequeños negocios.
+                    TecnoAyuda ofrece apoyo académico y digital
+                    para estudiantes, profesionales y pequeños negocios.
                 </p>
 
                 <p>
-                    Brindamos apoyo en la creación de documentos, presentaciones, trámites en línea, correos electrónicos y capacitación digital básica.
+                    Brindamos orientación para organizar documentos,
+                    preparar presentaciones, utilizar el correo
+                    electrónico y manejar herramientas digitales.
+                </p>
+
+                <p>
+                    Te acompañamos con explicaciones claras para
+                    que desarrolles tus habilidades y avances
+                    con mayor confianza.
                 </p>
             </div>
-
         </div>
-
     </section>
 
     <section id="servicios" class="mb-5">
-
-        <h2 class="text-center mb-4">Nuestros Servicios</h2>
+        <h2 class="text-center mb-4">Nuestros servicios</h2>
 
         <div class="row">
 
             <div class="col-md-4 mb-3">
                 <div class="card shadow h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Correos Electrónicos</h5>
-                        <p class="card-text">
-                            Creación y gestión de cuentas de correo.
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5">Correos electrónicos</h3>
+
+                        <p>
+                            Orientación para crear y utilizar cuentas,
+                            enviar mensajes y adjuntar archivos.
                         </p>
-                        <a href="#" class="btn btn-primary">
-                            Más información
+
+                        <a href="{{ url_for('productos') }}"
+                           class="btn btn-primary mt-auto">
+                            Consultar catálogo
                         </a>
                     </div>
                 </div>
@@ -104,13 +302,18 @@
 
             <div class="col-md-4 mb-3">
                 <div class="card shadow h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Documentos y Tareas</h5>
-                        <p class="card-text">
-                            Elaboración de documentos y trabajos académicos.
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5">Documentos y tareas</h3>
+
+                        <p>
+                            Apoyo para comprender instrucciones,
+                            organizar ideas y preparar documentos
+                            y presentaciones académicas.
                         </p>
-                        <a href="#" class="btn btn-success">
-                            Más información
+
+                        <a href="{{ url_for('productos') }}"
+                           class="btn btn-success mt-auto">
+                            Consultar catálogo
                         </a>
                     </div>
                 </div>
@@ -118,198 +321,273 @@
 
             <div class="col-md-4 mb-3">
                 <div class="card shadow h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Soporte Técnico</h5>
-                        <p class="card-text">
-                            Asistencia básica para computadoras y plataformas.
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h5">Soporte técnico</h3>
+
+                        <p>
+                            Asistencia básica para utilizar computadoras,
+                            archivos y plataformas digitales.
                         </p>
-                        <a href="#" class="btn btn-dark">
-                            Más información
+
+                        <a href="{{ url_for('productos') }}"
+                           class="btn btn-dark mt-auto">
+                            Consultar catálogo
                         </a>
                     </div>
                 </div>
             </div>
 
         </div>
-
     </section>
 
-    <section id="contacto">
+    <section class="mb-5" aria-labelledby="titulo-pedidos">
+        <div class="card border-0 shadow-sm bg-light">
+            <div class="card-body p-4">
+                <h2 id="titulo-pedidos" class="h4">
+                    Solicita un servicio y consulta su avance
+                </h2>
 
+                <p>
+                    Elige un servicio del catálogo y describe lo que
+                    necesitas. Desde tu cuenta podrás revisar el pedido
+                    y descargar el resultado cuando esté pagado y entregado.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    {% if session.get('administrador') %}
+                        <a href="{{ url_for('pedidos_admin') }}"
+                           class="btn btn-primary">
+                            Gestionar pedidos
+                        </a>
+
+                    {% elif session.get('cuenta_cliente_id') %}
+                        <a href="{{ url_for('mis_pedidos') }}"
+                           class="btn btn-primary">
+                            Ver mis pedidos
+                        </a>
+
+                        <a href="{{ url_for('productos') }}"
+                           class="btn btn-outline-primary">
+                            Elegir un servicio
+                        </a>
+
+                    {% else %}
+                        <a href="{{ url_for('registro_cliente') }}"
+                           class="btn btn-primary">
+                            Crear mi cuenta
+                        </a>
+
+                        <a href="{{ url_for('login_cliente') }}"
+                           class="btn btn-outline-primary">
+                            Ya tengo una cuenta
+                        </a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="mb-5">
         <h2 class="text-center mb-4">Contacto</h2>
 
         <div class="row">
+            <div class="col-md-6 mb-4">
+                <h3 class="h5">¿Necesitas orientación?</h3>
 
-            <div class="col-md-6">
+                <p>
+                    Describe tu necesidad en el formulario.
+                    La solicitud quedará guardada para que
+                    la administración pueda revisarla.
+                </p>
 
-               <form id="formRegistro">
-
-    <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre</label>
-        <input type="text" id="nombre" class="form-control">
-    </div>
-
-    <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <input type="text" id="descripcion" class="form-control">
-    </div>
-
-    <div class="mb-3">
-        <label for="categoria" class="form-label">Categoría</label>
-        <input type="text" id="categoria" class="form-control">
-    </div>
-
-    <button type="submit" class="btn btn-success">
-        Registrar solicitud
-    </button>
-
-</form>
-
+                <a href="#registro" class="btn btn-primary">
+                    Ir al formulario
+                </a>
             </div>
 
             <div class="col-md-6">
+                <h3 class="h5">Información de contacto</h3>
 
-                <h5>Información de contacto</h5>
+                <p>
+                    <strong>Correo:</strong> contacto@tecnoayuda.com
+                </p>
 
-                <p><strong>Correo:</strong> contacto@tecnoayuda.com</p>
+                <p>
+                    <strong>Teléfono:</strong> 0999999999
+                </p>
 
-                <p><strong>Teléfono:</strong> 0999999999</p>
+                <p>
+                    <strong>Dirección:</strong> Lago Agrio, Ecuador
+                </p>
 
-                <p><strong>Dirección:</strong> Lago Agrio, Ecuador</p>
+                <p class="small text-muted">
+                    El correo y el teléfono son datos de ejemplo
+                    del proyecto.
+                </p>
 
-                <a href="mailto:contacto@tecnoayuda.com" class="btn btn-success m-1">
+                <a href="mailto:contacto@tecnoayuda.com"
+                   class="btn btn-success m-1">
                     Correo
                 </a>
 
-                <a href="https://www.facebook.com" class="btn btn-primary m-1">
+                <a href="https://www.facebook.com"
+                   class="btn btn-primary m-1">
                     Facebook
                 </a>
 
-                <a href="https://www.instagram.com" class="btn btn-danger m-1">
+                <a href="https://www.instagram.com"
+                   class="btn btn-danger m-1">
                     Instagram
                 </a>
-
             </div>
-
         </div>
-
     </section>
+
     <section id="registro" class="my-5">
+        <h2 class="text-center mb-4">Solicitar apoyo</h2>
 
-    <h2 class="text-center mb-4">Registro de Solicitudes</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
 
-    <div class="row">
+                        <form
+                            id="formRegistro"
+                            action="{{ url_for('enviar_solicitud') }}"
+                            method="POST"
+                            data-modo="servidor">
 
-        <div class="col-md-6">
+                            {{ form.hidden_tag() }}
 
-            <form id="formRegistro">
+                            {% for error in form.csrf_token.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    No se pudo validar el formulario.
+                                    Recarga la página e inténtalo nuevamente.
+                                </div>
+                            {% endfor %}
 
-                <div class="mb-3">
-                    <input type="text" id="nombre" class="form-control" placeholder="Nombre">
+                            <div class="mb-3">
+                                {{ form.nombre.label(class_="form-label") }}
+
+                                {{ form.nombre(
+                                    class_="form-control is-invalid"
+                                        if form.nombre.errors
+                                        else "form-control",
+                                    minlength="3",
+                                    maxlength="100",
+                                    placeholder="Escribe tu nombre",
+                                    required=True
+                                ) }}
+
+                                {% for error in form.nombre.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.descripcion.label(class_="form-label") }}
+
+                                {{ form.descripcion(
+                                    class_="form-control is-invalid"
+                                        if form.descripcion.errors
+                                        else "form-control",
+                                    rows="4",
+                                    minlength="5",
+                                    maxlength="300",
+                                    placeholder="Describe la ayuda que necesitas",
+                                    required=True
+                                ) }}
+
+                                {% for error in form.descripcion.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form.categoria.label(class_="form-label") }}
+
+                                {{ form.categoria(
+                                    class_="form-select is-invalid"
+                                        if form.categoria.errors
+                                        else "form-select",
+                                    required=True
+                                ) }}
+
+                                {% for error in form.categoria.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                Enviar solicitud
+                            </button>
+
+                            <div
+                                id="spinner"
+                                class="mt-3"
+                                style="display: none;"
+                                role="status">
+
+                                <span
+                                    class="spinner-border spinner-border-sm text-primary"
+                                    aria-hidden="true"></span>
+
+                                Guardando solicitud...
+                            </div>
+
+                        </form>
+
+                        <p class="small text-muted mt-3 mb-0">
+                            Este formulario envía una consulta de orientación.
+                            Para contratar un servicio y consultar su avance,
+                            utiliza el catálogo desde tu cuenta.
+                        </p>
+
+                    </div>
                 </div>
-
-                <div class="mb-3">
-                    <input type="text" id="descripcion" class="form-control" placeholder="Descripción">
-                </div>
-
-                <div class="mb-3">
-                    <input type="text" id="categoria" class="form-control" placeholder="Categoría">
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    Registrar
-                </button>
-
-            </form>
-            <div id="spinner" class="text-center my-3" style="display:none;">
-
-    <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando...</span>
-    </div>
-
-    <p class="mt-2">Procesando información...</p>
-
-</div>
-
-            <div id="mensaje" class="mt-3"></div>
-
-            <h5 class="mt-3">
-                Total registros: <span id="total">0</span>
-            </h5>
-
+            </div>
         </div>
+    </section>
 
-        <div class="col-md-6">
-            <div id="lista"></div>
-        </div>
-
-    </div>
-
-</section>
-
-    <aside class="mt-5 p-3">
-        <h4>Información Adicional</h4>
+    <aside class="mt-5 p-4 bg-light rounded">
+        <h2 class="h4">Información adicional</h2>
 
         <p>
-            Horario de atención: Lunes a Viernes de 08:00 a 17:00.
+            Horario de atención:
+            lunes a viernes de 08:00 a 17:00.
         </p>
 
-        <p>
-            Promoción: Asesoría gratuita para creación de correos electrónicos.
+        <p class="mb-0">
+            Promoción: asesoría gratuita para la creación
+            de correos electrónicos.
         </p>
     </aside>
 
 </main>
 
-<footer>
-    <p>Leidy - Desarrollo de Aplicaciones Web - 2026</p>
+<footer class="border-top py-4 text-center">
+    <div class="container">
+        <p class="mb-1">
+            TecnoAyuda · Apoyo académico y digital
+        </p>
+
+        <small>
+            Leidy · Desarrollo de Aplicaciones Web · 2026
+        </small>
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/script.js"></script>
-    <div class="modal fade" id="modalInfo" tabindex="-1">
 
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-                    Información del servicio
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-            <div class="modal-body">
-
-                <p id="contenidoModal">
-                    TecnoAyuda brinda soluciones tecnológicas para estudiantes, emprendedores y profesionales.
-                </p>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
-                    Cerrar
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 </html>

@@ -1,101 +1,102 @@
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("formRegistro");
-    const lista = document.getElementById("lista");
-    const mensaje = document.getElementById("mensaje");
-    const total = document.getElementById("total");
-    const spinner = document.getElementById("spinner");
+
+    if (!form) {
+        return;
+    }
 
     const nombre = document.getElementById("nombre");
     const descripcion = document.getElementById("descripcion");
     const categoria = document.getElementById("categoria");
+    const spinner = document.getElementById("spinner");
+    const boton = form.querySelector('button[type="submit"]');
 
-    // Ejecutar solamente si existe el formulario completo.
-    if (
-        !form || !lista || !mensaje || !total || !spinner ||
-        !nombre || !descripcion || !categoria
-    ) {
+    if (!nombre || !descripcion || !categoria || !boton) {
         return;
     }
 
-    const botonRegistrar = form.querySelector('button[type="submit"]');
+    // FORMULARIO CONECTADO CON FLASK
+    if (form.dataset.modo === "servidor") {
+        let enviando = false;
 
-    let contador = 0;
-    let procesando = false;
+        form.addEventListener("submit", function (evento) {
+            if (enviando) {
+                evento.preventDefault();
+                return;
+            }
 
-    // Usar nuestras validaciones al enviar el formulario.
-    form.noValidate = true;
+            if (!form.checkValidity()) {
+                evento.preventDefault();
+                form.reportValidity();
+                return;
+            }
+
+            enviando = true;
+            boton.disabled = true;
+            form.setAttribute("aria-busy", "true");
+
+            if (spinner) {
+                spinner.style.display = "block";
+            }
+
+            // Permitir el envío normal del formulario a Python.
+            // Los campos permanecen habilitados para enviar sus datos.
+        });
+
+        window.addEventListener("pageshow", function () {
+            enviando = false;
+            boton.disabled = false;
+            form.setAttribute("aria-busy", "false");
+
+            if (spinner) {
+                spinner.style.display = "none";
+            }
+        });
+
+        return;
+    }
+
+    // DEMOSTRACIÓN ESTÁTICA DE GITHUB PAGES
+    const lista = document.getElementById("lista");
+    const mensaje = document.getElementById("mensaje");
+    const total = document.getElementById("total");
+
+    if (!lista || !mensaje || !total) {
+        return;
+    }
+
+    let contador = lista.children.length;
     total.textContent = contador;
 
-    // Mostrar si un campo es válido.
-    function marcarCampo(campo, valido) {
-        campo.classList.toggle("is-valid", valido);
+    function mostrarMensaje(texto, tipo) {
+        const alerta = document.createElement("div");
+
+        alerta.className = `alert alert-${tipo}`;
+        alerta.setAttribute("role", "status");
+        alerta.textContent = texto;
+
+        mensaje.replaceChildren(alerta);
+    }
+
+    function validarCampo(campo, valido) {
         campo.classList.toggle("is-invalid", !valido);
-        campo.setAttribute("aria-invalid", String(!valido));
+        campo.classList.toggle("is-valid", valido);
 
         return valido;
     }
 
-    function validarNombre() {
-        return marcarCampo(
-            nombre,
-            nombre.value.trim().length >= 3
-        );
-    }
-
-    function validarDescripcion() {
-        return marcarCampo(
-            descripcion,
-            descripcion.value.trim().length >= 5
-        );
-    }
-
-    function validarCategoria() {
-        return marcarCampo(
-            categoria,
-            categoria.value.trim().length > 0
-        );
-    }
-
-    // Validaciones mientras se escribe.
-    nombre.addEventListener("input", validarNombre);
-    descripcion.addEventListener("input", validarDescripcion);
-    categoria.addEventListener("input", validarCategoria);
-
-    // Mostrar mensajes.
-    function mostrarMensaje(texto, tipo) {
-        const alerta = document.createElement("div");
-
-        alerta.className =
-            `alert alert-${tipo} alert-dismissible fade show`;
-        alerta.setAttribute("role", "alert");
-
-        const contenido = document.createElement("span");
-        contenido.textContent = texto;
-
-        const cerrar = document.createElement("button");
-        cerrar.type = "button";
-        cerrar.className = "btn-close";
-        cerrar.setAttribute("data-bs-dismiss", "alert");
-        cerrar.setAttribute("aria-label", "Cerrar mensaje");
-
-        alerta.append(contenido, cerrar);
-        mensaje.replaceChildren(alerta);
-    }
-
-    // Crear una tarjeta con los datos de la solicitud.
     function agregarSolicitud(datos) {
         const tarjeta = document.createElement("div");
-        tarjeta.className = "card shadow mb-3";
+        tarjeta.className = "card shadow-sm mb-3";
 
         const cuerpo = document.createElement("div");
         cuerpo.className = "card-body";
 
-        const titulo = document.createElement("h5");
-        titulo.className = "card-title";
+        const titulo = document.createElement("h3");
+        titulo.className = "h5";
         titulo.textContent = datos.nombre;
 
         const detalle = document.createElement("p");
-        detalle.className = "card-text";
         detalle.textContent = datos.descripcion;
 
         const etiqueta = document.createElement("span");
@@ -104,20 +105,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const eliminar = document.createElement("button");
         eliminar.type = "button";
-        eliminar.className =
-            "btn btn-danger btn-sm float-end eliminar";
+        eliminar.className = "btn btn-outline-danger btn-sm ms-3";
         eliminar.textContent = "Eliminar";
 
         eliminar.addEventListener("click", function () {
             tarjeta.remove();
-
             contador--;
             total.textContent = contador;
-
-            mostrarMensaje(
-                "Solicitud eliminada de la lista.",
-                "info"
-            );
         });
 
         cuerpo.append(titulo, detalle, etiqueta, eliminar);
@@ -128,86 +122,50 @@ document.addEventListener("DOMContentLoaded", function () {
         total.textContent = contador;
     }
 
-    // Enviar el formulario.
     form.addEventListener("submit", function (evento) {
         evento.preventDefault();
 
-        if (procesando) {
-            return;
-        }
+        const nombreValido = validarCampo(
+            nombre,
+            nombre.value.trim().length >= 3 &&
+            nombre.value.trim().length <= 100
+        );
 
-        const nombreValido = validarNombre();
-        const descripcionValida = validarDescripcion();
-        const categoriaValida = validarCategoria();
+        const descripcionValida = validarCampo(
+            descripcion,
+            descripcion.value.trim().length >= 5 &&
+            descripcion.value.trim().length <= 300
+        );
 
-        if (
-            !nombreValido ||
-            !descripcionValida ||
-            !categoriaValida
-        ) {
+        const categoriaValida = validarCampo(
+            categoria,
+            categoria.value.trim() !== ""
+        );
+
+        if (!nombreValido || !descripcionValida || !categoriaValida) {
             mostrarMensaje(
-                "Escribe un nombre de al menos 3 caracteres, " +
-                "una descripción de al menos 5 caracteres " +
-                "y una categoría.",
+                "Revisa el nombre, la descripción y la categoría.",
                 "danger"
             );
-
-            const primerCampoInvalido =
-                form.querySelector(".is-invalid");
-
-            if (primerCampoInvalido) {
-                primerCampoInvalido.focus();
-            }
-
             return;
         }
 
-        // Guardar los valores antes de mostrar la espera.
-        const datos = {
+        agregarSolicitud({
             nombre: nombre.value.trim(),
             descripcion: descripcion.value.trim(),
             categoria: categoria.value.trim()
-        };
+        });
 
-        procesando = true;
-        botonRegistrar.disabled = true;
+        mostrarMensaje(
+            "Solicitud agregada a la demostración. " +
+            "No se envía y desaparecerá al recargar.",
+            "info"
+        );
 
-        nombre.disabled = true;
-        descripcion.disabled = true;
-        categoria.disabled = true;
+        form.reset();
 
-        mensaje.replaceChildren();
-        spinner.style.display = "block";
-        form.setAttribute("aria-busy", "true");
-
-        // Simular el procesamiento visual de la solicitud.
-        setTimeout(function () {
-            agregarSolicitud(datos);
-
-            spinner.style.display = "none";
-            form.setAttribute("aria-busy", "false");
-
-            mostrarMensaje(
-                "Solicitud agregada a la lista de esta página.",
-                "success"
-            );
-
-            form.reset();
-
-            [nombre, descripcion, categoria].forEach(
-                function (campo) {
-                    campo.disabled = false;
-                    campo.classList.remove(
-                        "is-valid",
-                        "is-invalid"
-                    );
-                    campo.removeAttribute("aria-invalid");
-                }
-            );
-
-            procesando = false;
-            botonRegistrar.disabled = false;
-            nombre.focus();
-        }, 1500);
+        [nombre, descripcion, categoria].forEach(function (campo) {
+            campo.classList.remove("is-valid", "is-invalid");
+        });
     });
 });

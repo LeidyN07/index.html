@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Ingresar a mi cuenta | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloLoginCliente">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+
+            <div class="text-center mb-4">
+                <h1 id="tituloLoginCliente" class="h2">
+                    Ingresa a tu cuenta
+                </h1>
+
+                <p class="text-muted">
+                    Accede para solicitar servicios y consultar
+                    tus pedidos de TecnoAyuda.
+                </p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-3">
+                            {{ form.correo.label(class_="form-label") }}
+
+                            {{ form.correo(
+                                class_="form-control is-invalid"
+                                    if form.correo.errors
+                                    else "form-control",
+                                type="email",
+                                autocomplete="username",
+                                maxlength="150",
+                                placeholder="nombre@ejemplo.com"
+                            ) }}
+
+                            {% for error in form.correo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.clave.label(class_="form-label") }}
+
+                            {{ form.clave(
+                                class_="form-control is-invalid"
+                                    if form.clave.errors
+                                    else "form-control",
+                                autocomplete="current-password",
+                                maxlength="128",
+                                placeholder="Escribe tu contraseña"
+                            ) }}
+
+                            {% for error in form.clave.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {{ form.submit(
+                            class_="btn btn-primary w-100"
+                        ) }}
+                    </form>
+
+                </div>
+            </div>
+
+            <p class="text-center mt-3">
+                ¿Todavía no tienes una cuenta?
+                <a href="{{ url_for('registro_cliente') }}">
+                    Crear cuenta
+                </a>
+            </p>
+
+            <div class="text-center">
+                <a href="{{ url_for('inicio') }}">
+                    Volver al inicio
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar servicio | TecnoAyuda{% endblock %}
+
+{% block content %}
+<section>
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h1 class="h3">Confirmar eliminación</h1>
+
+                    <p>Vas a eliminar el siguiente servicio:</p>
+
+                    <dl>
+                        <dt>Nombre</dt>
+                        <dd>{{ servicio[1] }}</dd>
+
+                        <dt>Descripción</dt>
+                        <dd>{{ servicio[2] }}</dd>
+
+                        <dt>Precio por unidad</dt>
+                        <dd>
+                            ${{ '%.2f' | format(servicio[3]) }}
+                        </dd>
+                    </dl>
+
+                    <div class="alert alert-warning">
+                        Esta acción no se puede deshacer.
+                        Si el servicio tiene pedidos o facturación
+                        relacionados, el sistema impedirá su eliminación.
+                    </div>
+
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                Confirmar eliminación
+                            </button>
+
+                            <a href="{{ url_for('productos') }}"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Cerrar sesión | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body text-center p-4">
+                <h1 class="h3">Cerrar sesión</h1>
+
+                <p>
+                    ¿Deseas salir de la administración de TecnoAyuda?
+                </p>
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+
+                    {% for error in form.csrf_token.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                            Recarga la página e inténtalo nuevamente.
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary">
+                        Sí, cerrar sesión
+                    </button>
+
+                    <a
+                        href="{{ url_for('productos') }}"
+                        class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

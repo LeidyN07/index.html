@@ -1,1 +1,110 @@
+{% extends 'base.html' %}
 
+{% block title %}Colaboradores | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloColaboradores">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h1 id="tituloColaboradores">Colaboradores registrados</h1>
+
+            <p class="text-muted mb-0">
+                Personas y negocios que apoyan los servicios de TecnoAyuda.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('nuevo_proveedor') }}"
+            class="btn btn-primary">
+            Agregar colaborador
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h2 class="h5 mb-0">Información de colaboradores</h2>
+        </div>
+
+        <div class="card-body">
+            <p class="text-muted">
+                Total de colaboradores: {{ proveedores | length }}
+            </p>
+
+            {% if proveedores %}
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <caption>
+                            Listado privado de colaboradores de TecnoAyuda.
+                        </caption>
+
+                        <thead class="table-primary">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Contacto</th>
+                                <th scope="col">Servicio o apoyo</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for proveedor in proveedores %}
+                                <tr>
+                                    <th scope="row">
+                                        {{ proveedor[0] }}
+                                    </th>
+
+                                    <td>{{ proveedor[1] }}</td>
+                                    <td>{{ proveedor[2] }}</td>
+
+                                    <td style="min-width: 220px;">
+                                        {{ proveedor[3] }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-4">
+                    <h3 class="h5">
+                        Todavía no hay colaboradores registrados
+                    </h3>
+
+                    <p class="text-muted">
+                        Agrega una persona o negocio que te apoye
+                        con los servicios del emprendimiento.
+                    </p>
+
+                    <a
+                        href="{{ url_for('nuevo_proveedor') }}"
+                        class="btn btn-primary">
+                        Registrar colaborador
+                    </a>
+                </div>
+
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex flex-wrap gap-2">
+        <a
+            href="{{ url_for('inicio') }}"
+            class="btn btn-outline-primary">
+            Volver al inicio
+        </a>
+
+        <a
+            href="{{ url_for('logout') }}"
+            class="btn btn-outline-secondary">
+            Cerrar sesión
+        </a>
+    </div>
+
+</section>
+
+{% endblock %}

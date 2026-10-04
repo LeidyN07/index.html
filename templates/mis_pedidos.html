@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis pedidos | TecnoAyuda{% endblock %}
+
+{% block content %}
+<section class="py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Mis pedidos</h1>
+            <p class="text-muted mb-0">
+                Consulta el avance, revisa tus comprobantes
+                y descarga los resultados.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url_for('productos') }}"
+               class="btn btn-primary">
+                Solicitar un servicio
+            </a>
+
+            <a href="{{ url_for('mi_cuenta') }}"
+               class="btn btn-outline-secondary">
+                Mi cuenta
+            </a>
+        </div>
+    </div>
+
+    {% if pedidos %}
+
+        <div class="row g-4">
+            {% for pedido in pedidos %}
+                <div class="col-lg-6">
+                    <article class="card border-0 shadow-sm h-100">
+
+                        <div class="card-header bg-primary text-white py-3">
+                            <span class="fw-semibold">
+                                Pedido PED-{{ '%06d' | format(pedido['id']) }}
+                            </span>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <h2 class="h5">
+                                {{ pedido['servicio'] }}
+                            </h2>
+
+                            <p class="text-muted"
+                               style="white-space: pre-wrap;">{{ pedido['descripcion'] }}</p>
+
+                            <dl class="row mb-3">
+                                <dt class="col-5">Cantidad</dt>
+                                <dd class="col-7">
+                                    {{ pedido['cantidad'] }}
+                                </dd>
+
+                                <dt class="col-5">Total</dt>
+                                <dd class="col-7 fw-bold">
+                                    ${{ '%.2f' | format(pedido['total']) }}
+                                </dd>
+
+                                <dt class="col-5">Fecha de registro</dt>
+                                <dd class="col-7">
+                                    {{ pedido['fecha'] }} UTC
+                                </dd>
+
+                                <dt class="col-5">Pago</dt>
+                                <dd class="col-7">
+                                    {% if pedido['estado_pago'] == 'Pagado' %}
+                                        <span class="badge bg-success">
+                                            Pagado
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">
+                                            Pendiente
+                                        </span>
+                                    {% endif %}
+                                </dd>
+
+                                <dt class="col-5">Estado del trabajo</dt>
+                                <dd class="col-7">
+                                    {% if pedido['estado_trabajo'] == 'Entregado' %}
+                                        <span class="badge bg-success">
+                                            Entregado
+                                        </span>
+                                    {% elif pedido['estado_trabajo'] == 'En proceso' %}
+                                        <span class="badge bg-primary">
+                                            En proceso
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            {{ pedido['estado_trabajo'] }}
+                                        </span>
+                                    {% endif %}
+                                </dd>
+                            </dl>
+
+                            {% if pedido['observaciones'] %}
+                                <div class="bg-light border rounded p-3 mb-3">
+                                    <h3 class="h6">
+                                        Mensaje de TecnoAyuda
+                                    </h3>
+
+                                    <p class="mb-0"
+                                       style="white-space: pre-wrap;">{{ pedido['observaciones'] }}</p>
+                                </div>
+                            {% endif %}
+
+                            {% if pedido['estado_pago'] == 'Pagado' %}
+                                <div class="mb-3">
+                                    <a
+                                        href="{{ url_for(
+                                            'comprobante_cliente',
+                                            pedido_id=pedido['id']
+                                        ) }}"
+                                        class="btn btn-outline-primary">
+                                        Ver comprobante
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            {% if
+                                pedido['estado_pago'] == 'Pagado'
+                                and pedido['estado_trabajo'] == 'Entregado'
+                                and pedido['archivo_guardado']
+                            %}
+
+                                <div class="alert alert-success">
+                                    Tu trabajo está listo para descargar.
+                                </div>
+
+                                <p class="small text-muted">
+                                    Archivo: {{ pedido['archivo_original'] }}
+                                </p>
+
+                                <a
+                                    href="{{ url_for(
+                                        'descargar_entrega',
+                                        pedido_id=pedido['id']
+                                    ) }}"
+                                    class="btn btn-success">
+                                    Descargar resultado
+                                </a>
+
+                            {% elif pedido['estado_pago'] != 'Pagado' %}
+
+                                <div class="alert alert-warning mb-0">
+                                    Tu pago está pendiente de confirmación.
+                                    Contacta a TecnoAyuda para coordinarlo.
+                                    El comprobante estará disponible al
+                                    confirmar el pago. La descarga estará
+                                    disponible cuando el pedido esté
+                                    pagado y entregado.
+                                </div>
+
+                            {% else %}
+
+                                <div class="alert alert-info mb-0">
+                                    Tu pago está confirmado y ya puedes
+                                    consultar el comprobante.
+                                    Aquí podrás descargar el resultado
+                                    cuando TecnoAyuda termine y entregue
+                                    tu trabajo.
+                                </div>
+
+                            {% endif %}
+                        </div>
+
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <h2 class="h5">Todavía no tienes pedidos</h2>
+
+                <p class="text-muted">
+                    Visita el catálogo y elige el servicio que necesitas.
+                </p>
+
+                <a href="{{ url_for('productos') }}"
+                   class="btn btn-primary">
+                    Ver catálogo
+                </a>
+            </div>
+        </div>
+
+    {% endif %}
+
+</section>
+{% endblock %}

@@ -1,62 +1,85 @@
 {% extends 'base.html' %}
 
-{% block title %}Servicios | TecnoAyuda{% endblock %}
+{% block title %}Catálogo | TecnoAyuda{% endblock %}
 
 {% block content %}
-
-<section aria-labelledby="tituloServicios">
-
-    <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-            <h1 id="tituloServicios">Catálogo de servicios</h1>
-
-            <p class="text-muted">
-                Apoyo académico y digital para estudiantes,
-                emprendedores y personas de nuestra comunidad.
+<section>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h1>Catálogo de servicios</h1>
+            <p class="text-muted mb-0">
+                Elige el apoyo académico o digital que necesitas.
             </p>
         </div>
 
-        <div class="col-md-4 text-md-end">
-            <a
-                href="{{ url_for('nuevo_producto') }}"
-                class="btn btn-primary">
-                Agregar servicio
-            </a>
-        </div>
-    </div>
+        <div class="d-flex flex-wrap gap-2">
+            {% if session.get('administrador') %}
 
-    <div class="alert alert-info">
-        Aquí puedes registrar los servicios de TecnoAyuda,
-        describir el apoyo que ofrecen y establecer su precio.
+                <a href="{{ url_for('nuevo_producto') }}"
+                   class="btn btn-primary">
+                    Agregar servicio
+                </a>
+
+                <a href="{{ url_for('pedidos_admin') }}"
+                   class="btn btn-outline-primary">
+                    Pedidos recibidos
+                </a>
+
+            {% elif session.get('cuenta_cliente_id') %}
+
+                <a href="{{ url_for('mis_pedidos') }}"
+                   class="btn btn-primary">
+                    Mis pedidos
+                </a>
+
+                <a href="{{ url_for('mi_cuenta') }}"
+                   class="btn btn-outline-secondary">
+                    Mi cuenta
+                </a>
+
+            {% else %}
+
+                <a href="{{ url_for('login_cliente') }}"
+                   class="btn btn-primary">
+                    Ingresar como cliente
+                </a>
+
+                <a href="{{ url_for('registro_cliente') }}"
+                   class="btn btn-outline-primary">
+                    Crear cuenta
+                </a>
+
+            {% endif %}
+        </div>
     </div>
 
     <div class="card shadow-sm">
         <div class="card-header bg-light">
-            <h2 class="h5 mb-0">Servicios registrados</h2>
+            <h2 class="h5 mb-0">Servicios disponibles</h2>
         </div>
 
         <div class="card-body">
-
             {% if productos %}
 
-                <p class="text-muted">
-                    Total de servicios: {{ productos | length }}
-                </p>
-
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle">
+                    <table class="table table-striped align-middle">
                         <caption>
-                            Catálogo de servicios de TecnoAyuda.
                             Precios expresados en dólares estadounidenses.
                         </caption>
 
                         <thead class="table-primary">
                             <tr>
-                                <th scope="col">ID</th>
                                 <th scope="col">Servicio</th>
                                 <th scope="col">Descripción</th>
                                 <th scope="col" class="text-end">
-                                    Precio (USD)
+                                    Precio por unidad
+                                </th>
+                                <th scope="col">
+                                    {% if session.get('administrador') %}
+                                        Administrar
+                                    {% else %}
+                                        Solicitar
+                                    {% endif %}
                                 </th>
                             </tr>
                         </thead>
@@ -65,17 +88,60 @@
                             {% for producto in productos %}
                                 <tr>
                                     <th scope="row">
-                                        {{ producto[0] }}
+                                        {{ producto[1] }}
                                     </th>
 
-                                    <td>{{ producto[1] }}</td>
-
-                                    <td style="min-width: 220px; white-space: normal;">
-                                        {{ producto[2] }}
-                                    </td>
+                                    <td>{{ producto[2] }}</td>
 
                                     <td class="text-end text-nowrap">
                                         ${{ '%.2f' | format(producto[3]) }}
+                                    </td>
+
+                                    <td>
+                                        {% if session.get('administrador') %}
+
+                                            <div class="d-flex gap-2">
+                                                <a
+                                                    href="{{ url_for(
+                                                        'editar_producto',
+                                                        servicio_id=producto[0]
+                                                    ) }}"
+                                                    class="btn btn-outline-primary btn-sm"
+                                                    aria-label="Editar {{ producto[1] }}">
+                                                    Editar
+                                                </a>
+
+                                                <a
+                                                    href="{{ url_for(
+                                                        'eliminar_producto',
+                                                        servicio_id=producto[0]
+                                                    ) }}"
+                                                    class="btn btn-outline-danger btn-sm"
+                                                    aria-label="Revisar eliminación de {{ producto[1] }}">
+                                                    Eliminar
+                                                </a>
+                                            </div>
+
+                                        {% elif session.get('cuenta_cliente_id') %}
+
+                                            <a
+                                                href="{{ url_for(
+                                                    'solicitar_servicio',
+                                                    servicio_id=producto[0]
+                                                ) }}"
+                                                class="btn btn-primary btn-sm">
+                                                Solicitar servicio
+                                            </a>
+
+                                        {% else %}
+
+                                            <a
+                                                href="{{ url_for('login_cliente') }}"
+                                                class="btn btn-outline-primary btn-sm">
+                                                Ingresar para solicitar
+                                            </a>
+
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -85,37 +151,17 @@
 
             {% else %}
 
-                <div class="text-center py-4">
-                    <h3 class="h5">
-                        Todavía no hay servicios registrados
-                    </h3>
-
-                    <p class="text-muted">
-                        Comienza agregando un servicio, como
-                        orientación para documentos, presentaciones
-                        o uso del correo electrónico.
-                    </p>
-
-                    <a
-                        href="{{ url_for('nuevo_producto') }}"
-                        class="btn btn-primary">
-                        Registrar el primer servicio
-                    </a>
-                </div>
+                <p class="text-center py-4 mb-0">
+                    Todavía no hay servicios disponibles.
+                </p>
 
             {% endif %}
-
         </div>
     </div>
 
-    <div class="mt-4">
-        <a
-            href="{{ url_for('inicio') }}"
-            class="btn btn-outline-secondary">
-            Volver al inicio
-        </a>
-    </div>
-
+    <a href="{{ url_for('inicio') }}"
+       class="btn btn-outline-secondary mt-4">
+        Volver al inicio
+    </a>
 </section>
-
 {% endblock %}

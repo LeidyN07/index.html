@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar pago | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloPago">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <h1 id="tituloPago" class="mb-4">
+                Confirmar pago
+            </h1>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">
+                        Registro TA-{{ '%06d' | format(registro[0]) }}
+                    </h2>
+                </div>
+
+                <div class="card-body">
+                    <p>
+                        <strong>Cliente:</strong>
+                        {{ registro[1] }}
+                    </p>
+
+                    <p>
+                        <strong>Servicio:</strong>
+                        {{ registro[2] }}
+                    </p>
+
+                    <p>
+                        <strong>Total por pagar:</strong>
+                        ${{ '%.2f' | format(registro[3]) }}
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Estado:</strong>
+                        <span class="badge bg-warning text-dark">
+                            {{ registro[4] }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-3">
+                            {{ form.metodo_pago.label(
+                                class_="form-label"
+                            ) }}
+
+                            {{ form.metodo_pago(
+                                class_="form-select is-invalid"
+                                    if form.metodo_pago.errors
+                                    else "form-select"
+                            ) }}
+
+                            {% for error in form.metodo_pago.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.referencia.label(
+                                class_="form-label"
+                            ) }}
+
+                            {{ form.referencia(
+                                class_="form-control is-invalid"
+                                    if form.referencia.errors
+                                    else "form-control",
+                                maxlength="100",
+                                placeholder="Número de operación, si corresponde"
+                            ) }}
+
+                            {% for error in form.referencia.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-check mb-3">
+                            {{ form.pagado(
+                                class_="form-check-input",
+                                required=True
+                            ) }}
+
+                            {{ form.pagado.label(
+                                class_="form-check-label"
+                            ) }}
+                        </div>
+
+                        <div class="alert alert-info">
+                            Confirma únicamente cuando hayas recibido
+                            el pago completo. La aplicación registra
+                            tu confirmación; no consulta el banco.
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button
+                                type="submit"
+                                class="btn btn-success">
+                                Confirmar pago recibido
+                            </button>
+
+                            <a
+                                href="{{ url_for('facturacion') }}"
+                                class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

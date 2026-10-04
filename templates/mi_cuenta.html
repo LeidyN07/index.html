@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi cuenta | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <h1 class="mb-4">Mi cuenta</h1>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h5 mb-0">
+                    Bienvenido/a, {{ cliente[1] }}
+                </h2>
+            </div>
+
+            <div class="card-body p-4">
+                <p>
+                    <strong>Correo:</strong> {{ cliente[2] }}
+                </p>
+
+                <p>
+                    <strong>Teléfono:</strong> {{ cliente[3] }}
+                </p>
+
+                <p class="text-muted">
+                    Tu cuenta ya está creada.
+                    Puedes consultar los servicios disponibles.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a
+                        href="{{ url_for('productos') }}"
+                        class="btn btn-primary">
+                        Consultar catálogo
+                    </a>
+
+                    <form
+                        action="{{ url_for('logout_cliente') }}"
+                        method="POST">
+
+                        {{ form.hidden_tag() }}
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-secondary">
+                            Cerrar mi sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <a
+            href="{{ url_for('inicio') }}"
+            class="btn btn-link mt-3">
+            Volver al inicio
+        </a>
+
+    </div>
+</section>
+
+{% endblock %}

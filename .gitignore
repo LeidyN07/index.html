@@ -1,0 +1,28 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Configuración privada
+.env
+.env.*
+
+# Bases de datos locales
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Trabajos entregados
+data/entregas/
+
+# Configuración del editor
+.vscode/
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear cuenta | TecnoAyuda{% endblock %}
+
+{% block content %}
+
+<section aria-labelledby="tituloRegistro">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="text-center mb-4">
+                <h1 id="tituloRegistro">Crea tu cuenta</h1>
+
+                <p class="text-muted">
+                    Solicita servicios, consulta tus pedidos
+                    y accede a los trabajos que te entreguemos.
+                </p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">Datos de tu cuenta</h2>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="mb-3">
+                            {{ form.nombre.label(class_="form-label") }}
+
+                            {{ form.nombre(
+                                class_="form-control is-invalid"
+                                    if form.nombre.errors
+                                    else "form-control",
+                                autocomplete="name",
+                                maxlength="100",
+                                placeholder="Escribe tu nombre completo"
+                            ) }}
+
+                            {% for error in form.nombre.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.correo.label(class_="form-label") }}
+
+                            {{ form.correo(
+                                class_="form-control is-invalid"
+                                    if form.correo.errors
+                                    else "form-control",
+                                type="email",
+                                autocomplete="email",
+                                maxlength="150",
+                                placeholder="nombre@ejemplo.com"
+                            ) }}
+
+                            {% for error in form.correo.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.telefono.label(class_="form-label") }}
+
+                            {{ form.telefono(
+                                class_="form-control is-invalid"
+                                    if form.telefono.errors
+                                    else "form-control",
+                                type="tel",
+                                autocomplete="tel",
+                                maxlength="20",
+                                placeholder="Tu teléfono de contacto"
+                            ) }}
+
+                            {% for error in form.telefono.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.clave.label(class_="form-label") }}
+
+                            {{ form.clave(
+                                class_="form-control is-invalid"
+                                    if form.clave.errors
+                                    else "form-control",
+                                autocomplete="new-password",
+                                maxlength="128",
+                                aria_describedby="ayudaClave"
+                            ) }}
+
+                            <div id="ayudaClave" class="form-text">
+                                Utiliza al menos 12 caracteres.
+                            </div>
+
+                            {% for error in form.clave.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form.confirmar_clave.label(
+                                class_="form-label"
+                            ) }}
+
+                            {{ form.confirmar_clave(
+                                class_="form-control is-invalid"
+                                    if form.confirmar_clave.errors
+                                    else "form-control",
+                                autocomplete="new-password",
+                                maxlength="128"
+                            ) }}
+
+                            {% for error in form.confirmar_clave.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {{ form.submit(
+                            class_="btn btn-primary w-100"
+                        ) }}
+
+                    </form>
+                </div>
+            </div>
+
+            <p class="text-center mt-3">
+                ¿Ya tienes una cuenta?
+                <a href="{{ url_for('login_cliente') }}">
+                    Inicia sesión
+                </a>
+            </p>
+
+            <div class="text-center">
+                <a href="{{ url_for('inicio') }}">
+                    Volver al inicio
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

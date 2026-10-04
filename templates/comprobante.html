@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Comprobante TA-{{ '%06d' | format(registro[0]) }} | TecnoAyuda
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 32px 16px;
+            background: #eef3f8;
+            color: #243449;
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+        }
+
+        .acciones {
+            max-width: 850px;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .boton {
+            display: inline-block;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 8px;
+            background: #175fa8;
+            color: white;
+            text-decoration: none;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .boton-secundario {
+            background: white;
+            color: #175fa8;
+            border: 1px solid #175fa8;
+        }
+
+        .boton:focus-visible {
+            outline: 3px solid #175fa8;
+            outline-offset: 4px;
+        }
+
+        .documento {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(35, 61, 90, 0.1);
+        }
+
+        .encabezado {
+            padding: 36px;
+            background: #175fa8;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 24px;
+        }
+
+        .marca {
+            margin: 0 0 8px;
+            font-size: 32px;
+            letter-spacing: -1px;
+        }
+
+        .encabezado p {
+            margin: 4px 0;
+            font-size: 14px;
+        }
+
+        .numero {
+            text-align: right;
+        }
+
+        .numero h1 {
+            margin: 0 0 10px;
+            font-size: 17px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .numero strong {
+            font-size: 24px;
+        }
+
+        .contenido {
+            padding: 36px;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: #e4f4e9;
+            color: #24633b;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .datos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin: 25px 0;
+        }
+
+        .datos h2 {
+            margin: 0 0 12px;
+            font-size: 13px;
+            color: #175fa8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .datos p {
+            margin: 6px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .nombre-cliente {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+
+        th {
+            padding: 13px 10px;
+            background: #edf4fb;
+            color: #175fa8;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 18px 10px;
+            border-bottom: 1px solid #dfe7ef;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .derecha {
+            text-align: right;
+        }
+
+        .importe {
+            white-space: nowrap;
+        }
+
+        .resumen {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .total {
+            width: 300px;
+            padding: 22px;
+            background: #edf4fb;
+            border-radius: 10px;
+        }
+
+        .total-fila {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .total strong {
+            font-size: 27px;
+            color: #175fa8;
+        }
+
+        .total p {
+            margin: 12px 0 0;
+            font-size: 12px;
+            color: #526579;
+        }
+
+        .nota {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dfe7ef;
+            font-size: 13px;
+            color: #526579;
+        }
+
+        .pie {
+            padding: 20px 36px;
+            background: #f6f8fb;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .pie strong {
+            color: #175fa8;
+        }
+
+        @media (max-width: 600px) {
+            .encabezado {
+                flex-direction: column;
+                padding: 24px;
+            }
+
+            .numero {
+                text-align: left;
+            }
+
+            .contenido {
+                padding: 24px;
+            }
+
+            .datos {
+                grid-template-columns: 1fr;
+            }
+
+            .total {
+                width: 100%;
+            }
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            body {
+                padding: 0;
+                background: white;
+                color: black;
+            }
+
+            .acciones {
+                display: none;
+            }
+
+            .documento {
+                max-width: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .encabezado {
+                background: white;
+                color: #175fa8;
+                border-bottom: 3px solid #175fa8;
+                padding: 0 0 24px;
+                flex-direction: row;
+            }
+
+            .contenido {
+                padding: 24px 0;
+            }
+
+            .datos {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .numero {
+                text-align: right;
+            }
+
+            .tabla-contenedor {
+                overflow: visible;
+            }
+
+            .total {
+                width: 300px;
+                border: 1px solid #dfe7ef;
+            }
+
+            tr,
+            .datos,
+            .resumen,
+            .nota {
+                break-inside: avoid;
+            }
+
+            .pie {
+                border-top: 1px solid #dfe7ef;
+                background: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="acciones">
+
+    {% if es_cliente | default(false) %}
+        <a class="boton boton-secundario"
+           href="{{ url_for('mis_pedidos') }}">
+            Volver a mis pedidos
+        </a>
+    {% else %}
+        <a class="boton boton-secundario"
+           href="{{ url_for('facturacion') }}">
+            Volver a facturación
+        </a>
+    {% endif %}
+
+    <button
+        class="boton"
+        type="button"
+        onclick="window.print()">
+        Imprimir / Guardar PDF
+    </button>
+</div>
+
+<article class="documento">
+
+    <header class="encabezado">
+        <div>
+            <h2 class="marca">TecnoAyuda</h2>
+            <p>Apoyo académico y digital</p>
+            <p>Lago Agrio, Ecuador</p>
+        </div>
+
+        <div class="numero">
+            <h1>Comprobante de pago</h1>
+            <strong>
+                TA-{{ '%06d' | format(registro[0]) }}
+            </strong>
+        </div>
+    </header>
+
+    <div class="contenido">
+
+        <span class="estado">PAGADO</span>
+
+        <div class="datos">
+            <section>
+                <h2>Datos del cliente</h2>
+
+                <p class="nombre-cliente">
+                    {{ registro[1] }}
+                </p>
+
+                <p>{{ registro[2] }}</p>
+
+                <p>
+                    <strong>Teléfono:</strong>
+                    {{ registro[3] }}
+                </p>
+            </section>
+
+            <section>
+                <h2>Información del pago</h2>
+
+                <p>
+                    <strong>Fecha de pago:</strong><br>
+                    {{ registro[12] or 'No indicada' }}
+                    {% if registro[12] %} UTC{% endif %}
+                </p>
+
+                <p>
+                    <strong>Método:</strong>
+                    {{ registro[9] }}
+                </p>
+
+                <p>
+                    <strong>Referencia:</strong>
+                    {{ registro[10] or 'No aplica' }}
+                </p>
+            </section>
+        </div>
+
+        <div class="tabla-contenedor">
+            <table aria-label="Detalle del servicio pagado">
+                <thead>
+                    <tr>
+                        <th scope="col">Servicio</th>
+                        <th scope="col" class="derecha">Cantidad</th>
+                        <th scope="col" class="derecha">Precio unitario</th>
+                        <th scope="col" class="derecha">Importe</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>{{ registro[4] }}</td>
+
+                        <td class="derecha">
+                            {{ registro[5] }}
+                        </td>
+
+                        <td class="derecha importe">
+                            ${{ '%.2f' | format(registro[6]) }}
+                        </td>
+
+                        <td class="derecha importe">
+                            ${{ '%.2f' | format(registro[7]) }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="resumen">
+            <div class="total">
+                <div class="total-fila">
+                    <span>Total pagado</span>
+
+                    <strong>
+                        ${{ '%.2f' | format(registro[7]) }}
+                    </strong>
+                </div>
+
+                <p>Valores expresados en dólares estadounidenses.</p>
+            </div>
+        </div>
+
+        <div class="nota">
+            <p>
+                Pago registrado y confirmado por la administración
+                de TecnoAyuda.
+            </p>
+
+            <p>
+                Documento interno del proyecto académico.
+                No constituye una factura tributaria.
+            </p>
+        </div>
+
+    </div>
+
+    <footer class="pie">
+        <strong>Gracias por confiar en TecnoAyuda.</strong><br>
+        Aprender y avanzar, paso a paso.
+    </footer>
+
+</article>
+
+</body>
+</html>

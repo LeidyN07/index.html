@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar registro | TecnoAyuda{% endblock %}
+
+{% block content %}
+<section>
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+
+                    <h1 class="h3">Confirmar eliminación</h1>
+
+                    <dl>
+                        <dt>Registro</dt>
+                        <dd>
+                            TA-{{ '%06d' | format(registro[0]) }}
+                        </dd>
+
+                        <dt>Cliente</dt>
+                        <dd>{{ registro[1] }}</dd>
+
+                        <dt>Servicio</dt>
+                        <dd>{{ registro[2] }}</dd>
+
+                        <dt>Total</dt>
+                        <dd>
+                            ${{ '%.2f' | format(registro[3]) }}
+                        </dd>
+
+                        <dt>Estado</dt>
+                        <dd>{{ registro[4] }}</dd>
+                    </dl>
+
+                    <div class="alert alert-warning">
+                        Esta acción no se puede deshacer.
+                        Solo se eliminará si continúa pendiente
+                        y no tiene un pedido relacionado.
+                    </div>
+
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        {% for error in form.csrf_token.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error }}
+                                Recarga la página e inténtalo nuevamente.
+                            </div>
+                        {% endfor %}
+
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                Confirmar eliminación
+                            </button>
+
+                            <a href="{{ url_for('facturacion') }}"
+                               class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
